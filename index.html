@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zDPlugins — Plugins para tu Servidor</title>
+<meta name="description" content="zDPlugins · Plugins para Minecraft, soporte 24/7 y comunidad activa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0e13; --bg2:#11141b; --card:#151925; --card2:#1a1f2e;
+    --border:#232936; --border-hover:#3a3245;
+    --orange:#ffa65c; --orange-soft:#ffb380; --orange-deep:#ff8a3d;
+    --orange-glow:rgba(255,166,92,.18);
+    --blue:#4a9eff; --blue-deep:#2f7fe0;
+    --text:#e8e4de; --muted:#8b90a0; --dim:#5a5f70;
+    --green:#a8e6a1;
+    --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Outfit',sans-serif; background:var(--bg); color:var(--text);
+    overflow-x:hidden; line-height:1.6;
+  }
+  ::selection{background:var(--orange); color:#0c0e13}
+
+  .bg-glow{position:fixed;inset:0;z-index:-2;pointer-events:none}
+  .bg-glow::before{
+    content:'';position:absolute;top:-20%;left:50%;transform:translateX(-50%);
+    width:900px;height:600px;border-radius:50%;
+    background:radial-gradient(circle,var(--orange-glow) 0%,transparent 65%);
+    filter:blur(60px);
+  }
+  .bg-grid{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;
+    background-image:
+      linear-gradient(var(--border) 1px,transparent 1px),
+      linear-gradient(90deg,var(--border) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 75%);
+  }
+
+  nav{
+    position:sticky;top:0;z-index:100;
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    background:rgba(12,14,19,.78);border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    max-width:1180px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+  }
+  .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+  .logo-badge{
+    width:38px;height:38px;border-radius:11px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--orange) 0%,var(--orange-deep) 100%);
+    display:grid;place-items:center;font-weight:900;font-size:19px;color:#14100b;
+    box-shadow:0 4px 18px rgba(255,166,92,.35);
+  }
+  .logo-name{font-size:21px;font-weight:800;letter-spacing:-.5px}
+  .logo-name .white{color:#ffffff}
+  .logo-name span{color:var(--orange)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:11px 22px;border-radius:12px;font-weight:700;font-size:15px;
+    text-decoration:none;transition:all .25s;cursor:pointer;border:none;
+    font-family:'Outfit',sans-serif;
+  }
+  .btn-discord{
+    background:#5865F2;color:#fff;
+    box-shadow:0 4px 16px rgba(88,101,242,.3);
+  }
+  .btn-discord:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(88,101,242,.45)}
+  .btn-orange{
+    background:linear-gradient(135deg,var(--orange),var(--orange-deep));
+    color:#14100b;box-shadow:0 4px 20px rgba(255,166,92,.3);
+  }
+  .btn-orange:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,166,92,.45)}
+  .btn-ghost{
+    background:transparent;color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+  .hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:6px}
+  .hamburger span{width:24px;height:2.5px;background:var(--text);border-radius:3px;transition:.3s}
+  .hamburger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+  .hero{
+    max-width:1180px;margin:0 auto;padding:110px 24px 90px;
+    text-align:center;position:relative;
+  }
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:7px 18px;border-radius:999px;font-size:13.5px;font-weight:600;
+    background:rgba(255,166,92,.1);border:1px solid rgba(255,166,92,.3);
+    color:var(--orange);margin-bottom:28px;
+    animation:fadeUp .7s ease both;
+  }
+  .pulse-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--green);
+    animation:pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(168,230,161,.5)}
+    70%{box-shadow:0 0 0 8px rgba(168,230,161,0)}
+    100%{box-shadow:0 0 0 0 rgba(168,230,161,0)}
+  }
+  .hero h1{
+    font-size:clamp(42px,7vw,76px);font-weight:900;line-height:1.05;
+    letter-spacing:-2.5px;margin-bottom:24px;
+    animation:fadeUp .7s .1s ease both;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(135deg,var(--orange-soft) 0%,var(--orange) 45%,var(--orange-deep) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{
+    font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:620px;
+    margin:0 auto 40px;animation:fadeUp .7s .2s ease both;
+  }
+  .hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeUp .7s .3s ease both}
+  .hero-actions .btn{padding:15px 32px;font-size:16px;border-radius:14px}
+
+  .stats{
+    max-width:980px;margin:-10px auto 0;padding:0 24px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+    animation:fadeUp .7s .4s ease both;
+  }
+  .stat-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px 16px;text-align:center;transition:all .3s;
+  }
+  .stat-card:hover{border-color:var(--orange);transform:translateY(-4px);box-shadow:0 12px 32px rgba(255,166,92,.12)}
+  .stat-num{
+    font-size:34px;font-weight:900;color:var(--orange);
+    font-variant-numeric:tabular-nums;letter-spacing:-1px;
+  }
+  .stat-label{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:4px}
+
+  section{max-width:1180px;margin:0 auto;padding:90px 24px 0}
+  .section-head{text-align:center;margin-bottom:52px}
+  .section-head .kicker{
+    font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+    color:var(--orange);margin-bottom:12px;display:block;
+  }
+  .section-head h2{font-size:clamp(30px,4.5vw,44px);font-weight:800;letter-spacing:-1.5px}
+  .section-head p{color:var(--muted);margin-top:12px;font-size:17px}
+
+  .plugins-grid{
+    display:grid;gap:22px;
+    grid-template-columns:minmax(0,560px);
+    justify-content:center;
+  }
+  .plugin-card{
+    background:linear-gradient(160deg,var(--card) 0%,var(--card2) 100%);
+    border:1px solid var(--border);border-radius:var(--radius);
+    padding:28px;transition:all .3s;position:relative;overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .plugin-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2.5px;
+    background:linear-gradient(90deg,transparent,var(--orange),transparent);
+    opacity:0;transition:opacity .3s;
+  }
+  .plugin-card:hover{border-color:var(--border-hover);transform:translateY(-6px);box-shadow:0 18px 44px rgba(0,0,0,.4)}
+  .plugin-card:hover::before{opacity:1}
+  .plugin-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .plugin-icon{
+    width:52px;height:52px;border-radius:14px;flex-shrink:0;
+    display:grid;place-items:center;font-size:25px;
+    background:rgba(255,166,92,.12);border:1px solid rgba(255,166,92,.25);
+  }
+  .plugin-name{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .plugin-cat{font-size:12.5px;color:var(--muted);font-weight:500}
+  .plugin-desc{color:var(--muted);font-size:14.5px;flex:1;margin-bottom:18px}
+  .plugin-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .plugin-meta-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .plugin-version{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);
+    background:var(--bg);padding:4px 10px;border-radius:7px;border:1px solid var(--border);
+  }
+  .badge{
+    font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;
+    letter-spacing:.5px;text-transform:uppercase;
+  }
+  .badge-free{background:rgba(168,230,161,.12);color:var(--green);border:1px solid rgba(168,230,161,.3)}
+  .btn-download{
+    display:inline-flex;align-items:center;gap:7px;
+    background:linear-gradient(135deg,var(--blue),var(--blue-deep));
+    color:#fff;font-size:13px;font-weight:800;
+    padding:7px 18px;border-radius:999px;text-decoration:none;
+    letter-spacing:.3px;transition:all .25s;
+    box-shadow:0 4px 14px rgba(74,158,255,.3);
+  }
+  .btn-download:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,158,255,.5)}
+
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:20px}
+  .feature-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:28px 24px;transition:all .3s;
+  }
+  .feature-card:hover{border-color:var(--orange);transform:translateY(-4px)}
+  .feature-icon{
+    width:48px;height:48px;border-radius:13px;display:grid;place-items:center;
+    font-size:22px;margin-bottom:16px;
+    background:linear-gradient(135deg,rgba(255,166,92,.16),rgba(255,138,61,.08));
+    border:1px solid rgba(255,166,92,.22);
+  }
+  .feature-card h3{font-size:17.5px;font-weight:700;margin-bottom:8px}
+  .feature-card p{font-size:14px;color:var(--muted)}
+
+  .cta-box{
+    position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#1a1f2e 0%,#151925 100%);
+    border:1px solid var(--border);border-radius:26px;
+    padding:70px 40px;text-align:center;
+  }
+  .cta-box::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 120%,var(--orange-glow),transparent 60%);
+  }
+  .cta-box>*{position:relative}
+  .cta-box h2{font-size:clamp(28px,4vw,42px);font-weight:900;letter-spacing:-1.5px;margin-bottom:14px}
+  .cta-box p{color:var(--muted);font-size:17px;max-width:520px;margin:0 auto 34px}
+
+  .faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .faq-item{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    overflow:hidden;transition:border-color .3s;
+  }
+  .faq-item.open{border-color:var(--orange)}
+  .faq-q{
+    width:100%;background:none;border:none;cursor:pointer;
+    padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;
+    color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;text-align:left;
+  }
+  .faq-arrow{color:var(--orange);transition:transform .3s;flex-shrink:0;font-size:18px}
+  .faq-item.open .faq-arrow{transform:rotate(180deg)}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .faq-a p{padding:0 24px 20px;color:var(--muted);font-size:14.5px}
+
+  footer{
+    margin-top:100px;border-top:1px solid var(--border);
+    background:var(--bg2);padding:50px 24px 34px;
+  }
+  .footer-inner{
+    max-width:1180px;margin:0 auto;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+  }
+  .footer-brand p{color:var(--dim);font-size:13.5px;margin-top:8px}
+  .footer-links{display:flex;gap:22px}
+  .footer-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
+  .footer-links a:hover{color:var(--orange)}
+  .footer-copy{max-width:1180px;margin:26px auto 0;padding-top:22px;border-top:1px solid var(--border);
+    color:var(--dim);font-size:12.5px;text-align:center}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  @media(max-width:860px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .nav-links{
+      position:fixed;top:71px;left:0;right:0;flex-direction:column;
+      background:rgba(12,14,19,.97);border-bottom:1px solid var(--border);
+      padding:26px 24px;gap:20px;display:none;
+    }
+    .nav-links.show{display:flex}
+    .hamburger{display:flex}
+    .hero{padding:70px 20px 60px}
+  }
+  @media(max-width:520px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .cta-box{padding:50px 22px}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-badge">z</div>
+      <div class="logo-name"><span class="white">zD</span><span>Plugins</span></div>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#plugins">Plugins</a>
+      <a href="wiki.html">Wiki</a>
+      <a href="#features">Características</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://discord.gg/RTzqPzd2JW" target="_blank" class="btn btn-discord">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 00.031.056 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.84 19.84 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 00-.031-.03z"/></svg>
+        Discord
+      </a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="hero-tag"><span class="pulse-dot"></span> Comunidad activa · Soporte 24/7</div>
+  <h1>Plugins que llevan tu<br>servidor al <span class="grad">siguiente nivel</span></h1>
+  <p>Plugins para Minecraft totalmente configurables y soporte personalizado. Desarrollados por y para administradores de servidores.</p>
+  <div class="hero-actions">
+    <a href="#plugins" class="btn btn-orange">🧡 Ver Plugins</a>
+    <a href="https://discord.gg/RTzqPzd2JW" target="_blank" class="btn btn-ghost">💬 Únete a la Comunidad</a>
+  </div>
+</header>
+
+<!-- ══════════ STATS ══════════ -->
+<div class="stats reveal">
+  <div class="stat-card"><div class="stat-num" data-count="1">0</div><div class="stat-label">Plugin publicado</div></div>
+  <div class="stat-card"><div class="stat-num" data-count="1000">0</div><div class="stat-label">Descargas totales</div></div>
+  <div class="stat-card"><div class="stat-num" data-count="1000">0</div><div class="stat-label">Servidores activos</div></div>
+  <div class="stat-card"><div class="stat-num" data-count="150">0</div><div class="stat-label">Miembros en Discord</div></div>
+</div>
+
+<!-- ══════════ PLUGINS ══════════ -->
+<section id="plugins">
+  <div class="section-head reveal">
+    <span class="kicker">Catálogo</span>
+    <h2>Nuestro Plugin</h2>
+    <p>Gratis para siempre, con actualizaciones gratuitas y soporte directo en Discord.</p>
+  </div>
+
+  <div class="plugins-grid">
+    <div class="plugin-card reveal">
+      <div class="plugin-top">
+        <div class="plugin-icon">🌍</div>
+        <div>
+          <div class="plugin-name">zDPlayerLocation</div>
+          <div class="plugin-cat">Geolocalización · Detección de país por IP</div>
+        </div>
+      </div>
+      <p class="plugin-desc">Detecta automáticamente el país de cada jugador mediante su IP y muéstralo de diferentes formas: bandera, código o nombre del país. Ideal para bienvenidas personalizadas, tablist y estadísticas de tu comunidad.</p>
+      <div class="plugin-meta">
+        <span class="plugin-version">v1.0.0 · 1.16 – 26.3</span>
+        <div class="plugin-meta-right">
+          <span class="badge badge-free">Gratuito</span>
+          <!-- El botón lleva a la página wiki.html -->
+          <a href="wiki.html" class="btn-download">⬇ Descargar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FEATURES ══════════ -->
+<section id="features">
+  <div class="section-head reveal">
+    <span class="kicker">¿Por qué zDPlugins?</span>
+    <h2>Calidad que se nota</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon">⚡</div>
+      <h3>Rendimiento óptimo</h3>
+      <p>Código optimizado, asíncrono y liviano. Cero lag incluso en servidores con cientos de jugadores.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🎫</div>
+      <h3>Soporte por tickets</h3>
+      <p>Sistema de tickets con transcripciones y valoraciones. Respondemos rápido y de verdad resolvemos.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔄</div>
+      <h3>Actualizaciones gratis</h3>
+      <p>Cada descarga incluye actualizaciones de por vida y compatibilidad con las versiones más nuevas.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">⚙️</div>
+      <h3>100% configurable</h3>
+      <p>Mensajes, formatos y opciones: todo editable desde configs limpias y bien documentadas.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">📖</div>
+      <h3>Wiki completa</h3>
+      <p>Documentación detallada con instalación, formatos, comandos y permisos de cada plugin.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🧡</div>
+      <h3>Comunidad activa</h3>
+      <p>Sugerencias votadas por la comunidad, sorteos, avisos de novedades y staff siempre disponible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CTA ══════════ -->
+<section>
+  <div class="cta-box reveal">
+    <h2>¿Listo para empezar?</h2>
+    <p>Únete a nuestro Discord para recibir soporte, votar sugerencias y participar en sorteos exclusivos.</p>
+    <a href="https://discord.gg/RTzqPzd2JW" target="_blank" class="btn btn-discord" style="padding:16px 36px;font-size:16px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 00.031.056 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.84 19.84 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 00-.031-.03z"/></svg>
+        Entrar al Discord
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section id="faq">
+  <div class="section-head reveal">
+    <span class="kicker">Dudas frecuentes</span>
+    <h2>Preguntas Frecuentes</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <button class="faq-q">¿Cómo descargo zDPlayerLocation?<span class="faq-arrow">▼</span></button>
+      <div class="faq-a"><p>Haz clic en el botón "Descargar" del plugin: te llevará a la wiki, donde encontrarás el link oficial de descarga en SpigotMC junto con toda la documentación de instalación y configuración.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">¿zDPlayerLocation es gratis?<span class="faq-arrow">▼</span></button>
+      <div class="faq-a"><p>¡Sí! zDPlayerLocation es 100% gratuito. Puedes descargarlo directamente desde SpigotMC y usarlo en tu servidor sin costo alguno. Si quieres apoyar el proyecto, ¡únete a nuestro Discord!</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">¿Las actualizaciones tienen costo extra?<span class="faq-arrow">▼</span></button>
+      <div class="faq-a"><p>No. Todas las actualizaciones son gratuitas para siempre. Al descargar un plugin recibes acceso permanente a cada versión nueva.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">¿Hacen plugins personalizados?<span class="faq-arrow">▼</span></button>
+      <div class="faq-a"><p>¡Sí! Abre un ticket "Custom Plugin" en nuestro Discord describiendo tu idea con la mayor cantidad de detalles posible y te enviaremos una cotización con tiempos de desarrollo.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">¿Qué versiones de Minecraft soporta zDPlayerLocation?<span class="faq-arrow">▼</span></button>
+      <div class="faq-a"><p>zDPlayerLocation es compatible desde la versión 1.16 hasta la 26.3. Funciona en Spigot y Paper, y recibe actualizaciones gratuitas para las versiones más nuevas.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q">¿Cómo detecta el país de los jugadores?<span class="faq-arrow">▼</span></button>
+      <div class="faq-a"><p>El plugin consulta la IP del jugador al conectarse y determina su país automáticamente. El resultado se puede mostrar de diferentes formas (bandera, código o nombre completo) según cómo lo configures.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">z</div>
+        <div class="logo-name"><span class="white">zD</span><span>Plugins</span></div>
+      </a>
+      <p>Plugins para Minecraft.<br>Hecho con 🧡 para la comunidad.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#plugins">Plugins</a>
+      <a href="wiki.html">Wiki</a>
+      <a href="#features">Características</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://discord.gg/RTzqPzd2JW" target="_blank">Discord</a>
+    </div>
+  </div>
+  <div class="footer-copy">© 2026 zDPlugins · Todos los derechos reservados · No afiliado con Mojang AB</div>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('show');
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('show');
+  }));
+
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const answer = item.querySelector('.faq-a');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o => {
+        o.classList.remove('open');
+        o.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = +el.dataset.count;
+      const dur = 1600, start = performance.now();
+      const tick = now => {
+        const p = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * eased).toLocaleString('es') + (target > 1 && p === 1 ? '+' : '');
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      counterObserver.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-num').forEach(el => counterObserver.observe(el));
+</script>
+</body>
+</html>
