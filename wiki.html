@@ -88,8 +88,6 @@
   .btn-orange:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,166,92,.45)}
   .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
   .btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
-  .hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:6px}
-  .hamburger span{width:24px;height:2.5px;background:var(--text);border-radius:3px;transition:.3s}
 
   main{max-width:900px;margin:0 auto;padding:60px 24px 0}
 
@@ -121,11 +119,6 @@
   .wiki-sub{color:var(--muted);font-size:17px;max-width:560px;margin:0 auto 30px}
   .wiki-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
   .wiki-actions .btn{padding:14px 30px;font-size:15.5px;border-radius:13px}
-  .wiki-official{
-    margin-top:22px;font-size:14px;color:var(--dim);
-  }
-  .wiki-official a{color:var(--blue);text-decoration:none;font-weight:600}
-  .wiki-official a:hover{text-decoration:underline}
 
   .wiki-nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:40px}
   .wiki-nav a{
@@ -196,26 +189,6 @@
     padding:3px 10px;border-radius:6px;display:inline-block;margin-top:10px;
   }
 
-  .cmd-table{width:100%;border-collapse:collapse}
-  .cmd-table th{
-    text-align:left;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;
-    color:var(--dim);padding:10px 14px;border-bottom:1px solid var(--border);
-  }
-  .cmd-table td{
-    padding:13px 14px;border-bottom:1px solid var(--border);font-size:14px;color:var(--muted);
-  }
-  .cmd-table tr:last-child td{border-bottom:none}
-  .cmd-table tr:hover td{background:rgba(74,158,255,.04)}
-  .cmd-table code{
-    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue);
-    background:rgba(74,158,255,.09);border:1px solid rgba(74,158,255,.2);
-    padding:3px 10px;border-radius:6px;white-space:nowrap;
-  }
-  .wiki-note{
-    margin-top:18px;font-size:13px;color:var(--dim);
-    display:flex;align-items:center;gap:8px;
-  }
-
   footer{
     margin-top:90px;border-top:1px solid var(--border);
     background:var(--bg2);padding:40px 24px 30px;text-align:center;
@@ -231,7 +204,6 @@
     .nav-right .back-link{display:none}
     .wiki-hero{padding:40px 20px}
     .wiki-block{padding:24px 18px}
-    .cmd-table th:nth-child(3),.cmd-table td:nth-child(3){display:none}
   }
 </style>
 </head>
@@ -254,9 +226,6 @@
         Discord
       </a>
     </div>
-    <button class="hamburger" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
   </div>
 </nav>
 
@@ -270,23 +239,21 @@
       <span class="tag-version">Spigot & Paper</span>
     </div>
     <h1>🌍 zD<span class="blue">PlayerLocation</span></h1>
-    <p class="wiki-sub">Wiki oficial del plugin. Aquí encontrarás todo: descarga, instalación, formatos de país, comandos y permisos.</p>
+    <p class="wiki-sub">Permite detectar el país de los jugadores mediante su IP y mostrarlo de diferentes formas. Totalmente configurable.</p>
     <div class="wiki-actions">
-      <!-- Descarga oficial desde SpigotMC -->
+      <a href="https://dontier-git.github.io/zDPlayerLocation-Wiki/" target="_blank" class="btn btn-orange">
+        📖 Ver la Wiki
+      </a>
       <a href="https://www.spigotmc.org/resources/zdplayerlocation-fully-configuration-country-1-20-26-3.138973/" target="_blank" class="btn btn-blue">
         ⬇ Descargar desde SpigotMC
       </a>
       <a href="https://discord.gg/RTzqPzd2JW" target="_blank" class="btn btn-discord">💬 Soporte en Discord</a>
     </div>
-    <p class="wiki-official">
-      También puedes visitar la <a href="https://dontier-git.github.io/zDPlayerLocation-Wiki/" target="_blank">wiki oficial en GitHub Pages ↗</a>
-    </p>
 
     <div class="wiki-nav">
       <a href="#caracteristicas">✨ Características</a>
       <a href="#instalacion">📦 Instalación</a>
       <a href="#formatos">🏳️ Formatos</a>
-      <a href="#comandos">⌨️ Comandos</a>
     </div>
   </div>
 
@@ -298,11 +265,6 @@
         <div class="wf-icon">🌐</div>
         <h3>Detección por IP</h3>
         <p>Detecta automáticamente el país de cada jugador al conectarse al servidor.</p>
-      </div>
-      <div class="wiki-feature">
-        <div class="wf-icon">🏳️</div>
-        <h3>Bandera del país</h3>
-        <p>Muestra la bandera emoji del país en bienvenidas, chat y tablist.</p>
       </div>
       <div class="wiki-feature">
         <div class="wf-icon">🔤</div>
@@ -352,20 +314,6 @@
           <p>Reinicia o enciende el servidor. El plugin generará su configuración automáticamente.</p>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div>
-          <h3>Personaliza la configuración</h3>
-          <p>Edita el archivo <code>config.yml</code> dentro de <code>/plugins/zDPlayerLocation/</code> y ajusta los mensajes y formatos a tu gusto.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div>
-          <h3>¡Listo!</h3>
-          <p>Cada jugador que entre tendrá su país detectado automáticamente. 🌍</p>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -399,33 +347,6 @@
         <span class="ph">🇪🇸 España (ES)</span>
       </div>
     </div>
-  </div>
-
-  <!-- ══════════ COMANDOS ══════════ -->
-  <div class="wiki-block reveal" id="comandos">
-    <h2><span class="n">4</span> Comandos y Permisos</h2>
-    <table class="cmd-table">
-      <thead>
-        <tr>
-          <th>Comando</th>
-          <th>Descripción</th>
-          <th>Permiso</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>/zdplayerlocation</code></td>
-          <td>Comando principal del plugin</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td><code>/zdplayerlocation reload</code></td>
-          <td>Recarga la configuración sin reiniciar</td>
-          <td><code>zdplayerlocation.admin</code></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="wiki-note">💡 ¿Dudas con la configuración? Abre un ticket en nuestro <a class="inline-link" href="https://discord.gg/RTzqPzd2JW" target="_blank">Discord</a> y te ayudamos.</div>
   </div>
 
 </main>
